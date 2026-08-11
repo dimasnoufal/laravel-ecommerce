@@ -38,6 +38,15 @@ services:
     networks:
       - ecommerce_network
 
+  redis:
+    image: redis:alpine
+    container_name: ecommerce_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - ecommerce_network
+
 networks:
   ecommerce_network:
     driver: bridge
