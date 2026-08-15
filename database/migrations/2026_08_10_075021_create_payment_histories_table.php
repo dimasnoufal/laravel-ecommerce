@@ -13,7 +13,13 @@ return new class extends Migration
     {
         Schema::create('payment_histories', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->foreignId('payment_id')->constrained('payments')->cascadeOnDelete();
+            $table->enum('status', array_column(\App\Enums\PaymentStatus::cases(), 'value'));
+            $table->string('provider_reference', 150)->nullable();
+            $table->jsonb('metadata')->nullable();
+            $table->timestamp('created_at')->useCurrent();
+
+            $table->index(['payment_id', 'created_at']);
         });
     }
 

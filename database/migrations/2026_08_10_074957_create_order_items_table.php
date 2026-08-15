@@ -13,8 +13,23 @@ return new class extends Migration
     {
         Schema::create('order_items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
+            $table->foreignId('product_variant_id')->constrained('product_variants')->restrictOnDelete();
+            $table->string('product_name');
+            $table->string('sku');
+            $table->decimal('unit_price', 15, 2);
+            $table->integer('quantity');
+            $table->decimal('subtotal', 15, 2);
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->index('order_id');
+            $table->index('product_variant_id');
         });
+
+        \Illuminate\Support\Facades\DB::statement('ALTER TABLE order_items ADD CONSTRAINT check_order_items_quantity CHECK (quantity > 0)');
+        \Illuminate\Support\Facades\DB::statement('ALTER TABLE order_items ADD CONSTRAINT check_order_items_unit_price CHECK (unit_price >= 0)');
+        \Illuminate\Support\Facades\DB::statement('ALTER TABLE order_items ADD CONSTRAINT check_order_items_subtotal CHECK (subtotal >= 0)');
     }
 
     /**

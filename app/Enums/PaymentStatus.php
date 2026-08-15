@@ -1,0 +1,14 @@
+<?php
+
+namespace App\Enums;
+
+enum PaymentStatus: string
+{
+    case PENDING = 'PENDING';
+    case PROCESSING = 'PROCESSING';
+    case PAID = 'PAID';
+    case FAILED = 'FAILED';
+    case EXPIRED = 'EXPIRED';
+    case CANCELLED = 'CANCELLED';
+    case REFUNDED = 'REFUNDED';
+}

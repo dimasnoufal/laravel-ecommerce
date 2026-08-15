@@ -13,8 +13,20 @@ return new class extends Migration
     {
         Schema::create('product_variants', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('product_id')->constrained('products')->restrictOnDelete();
+            $table->string('sku')->unique();
+            $table->decimal('price', 15, 2);
+            $table->integer('stock')->default(0);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->index('product_id');
+            $table->index('is_active');
         });
+
+        \Illuminate\Support\Facades\DB::statement('ALTER TABLE product_variants ADD CONSTRAINT check_product_variants_price CHECK (price >= 0)');
+        \Illuminate\Support\Facades\DB::statement('ALTER TABLE product_variants ADD CONSTRAINT check_product_variants_stock CHECK (stock >= 0)');
     }
 
     /**
