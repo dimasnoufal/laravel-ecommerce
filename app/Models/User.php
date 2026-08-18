@@ -55,6 +55,27 @@ class User extends Authenticatable
         return $this->hasMany(Report::class, 'generated_by');
     }
 
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_roles');
+    }
+
+    /**
+     * Check if the user has a specific role by slug.
+     */
+    public function hasRole($roleSlug)
+    {
+        if (is_string($roleSlug)) {
+            return $this->roles->contains('slug', $roleSlug);
+        }
+        
+        if (is_array($roleSlug)) {
+            return $this->roles->whereIn('slug', $roleSlug)->isNotEmpty();
+        }
+
+        return false;
+    }
+
     /**
      * Get the attributes that should be cast.
      *
