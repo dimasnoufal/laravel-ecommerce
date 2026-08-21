@@ -13,7 +13,7 @@ RUN apt-get update && apt-get install -y \
 # Install PHP extensions required for Laravel & PostgreSQL
 RUN docker-php-ext-install pdo pdo_pgsql zip
 
-# Install Redis extensions and enable it    xs
+# Install Redis extensions and enable it
 RUN pecl install redis \
     && docker-php-ext-enable redis
 

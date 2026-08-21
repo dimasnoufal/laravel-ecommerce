@@ -14,7 +14,13 @@ class ProductVariant extends Model
         'sku',
         'price',
         'stock',
-        'status',
+        'is_active',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
+        'price' => 'decimal:2',
+        'stock' => 'integer',
     ];
 
     public function product()
@@ -24,7 +30,8 @@ class ProductVariant extends Model
 
     public function attributeValues()
     {
-        return $this->belongsToMany(AttributeValue::class, 'product_variant_attribute_values', 'product_variant_id', 'attribute_value_id');
+        return $this->belongsToMany(AttributeValue::class, 'product_variant_attribute_values', 'product_variant_id', 'attribute_value_id')
+                    ->withTimestamps();
     }
 
     public function stockMovements()

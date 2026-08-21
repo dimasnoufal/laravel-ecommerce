@@ -17,6 +17,15 @@
     <!-- Chart.js for beautiful charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- jQuery and DataTables -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+
+    <!-- Flatpickr Date Picker (Modern Calendar Widget) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
     <style>
         :root {
             --primary: #2563EB;
@@ -254,15 +263,22 @@
         /* Main Content Wrapper */
         .main-wrapper {
             flex-grow: 1;
+            flex-shrink: 1;
+            flex-basis: 0%;
             margin-left: var(--sidebar-width);
             min-height: 100vh;
+            min-width: 0;
+            width: calc(100% - var(--sidebar-width));
+            max-width: calc(100% - var(--sidebar-width));
             display: flex;
             flex-direction: column;
-            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s cubic-bezier(0.4, 0, 0.2, 1), max-width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .sidebar.collapsed ~ .main-wrapper {
             margin-left: var(--sidebar-collapsed-width);
+            width: calc(100% - var(--sidebar-collapsed-width));
+            max-width: calc(100% - var(--sidebar-collapsed-width));
         }
 
         /* Header Navbar */
@@ -450,6 +466,9 @@
         .content-body {
             padding: 2rem;
             flex-grow: 1;
+            width: 100%;
+            min-width: 0;
+            overflow-x: hidden;
         }
 
         /* ===== TOAST NOTIFICATION SYSTEM (FINOTIC/MODERN STYLE) ===== */
@@ -691,14 +710,17 @@
             display: flex;
             flex-direction: column;
             transition: border-color 0.2s ease;
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
         }
         .panel-header {
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             justify-content: space-between;
             margin-bottom: 1.25rem;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
         .panel-title {
             font-size: 1.0625rem;
@@ -708,6 +730,15 @@
         }
         .panel-content {
             flex-grow: 1;
+            width: 100%;
+            min-width: 0;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 0.25rem;
         }
 
         /* Status Pill */
@@ -736,6 +767,399 @@
         .status-cancelled {
             background: var(--danger-bg);
             color: var(--danger);
+        }
+
+        /* ===== CUSTOM SLEEK DATATABLES SYSTEM ===== */
+        .dataTables_wrapper {
+            position: relative;
+            font-size: 0.875rem;
+            color: var(--text-main);
+            width: 100%;
+        }
+
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 1.25rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .dataTables_wrapper .dataTables_length select {
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0.45rem 0.75rem;
+            color: var(--text-main);
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            margin: 0 0.35rem;
+            transition: all 0.2s ease;
+        }
+
+        .dataTables_wrapper .dataTables_length select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 0.5rem 1rem;
+            color: var(--text-main);
+            outline: none;
+            min-width: 240px;
+            margin-left: 0.5rem;
+            transition: all 0.2s ease;
+        }
+
+        .dataTables_wrapper .dataTables_filter input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+            background: var(--card-bg);
+        }
+
+        table.dataTable {
+            width: 100% !important;
+            border-collapse: separate !important;
+            border-spacing: 0 !important;
+            margin-top: 0.5rem !important;
+            margin-bottom: 1.25rem !important;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border-color) !important;
+        }
+
+        table.dataTable thead th {
+            background: var(--bg-body) !important;
+            color: var(--text-muted) !important;
+            font-size: 0.75rem !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.06em !important;
+            padding: 1rem 1.25rem !important;
+            border-bottom: 1px solid var(--border-color) !important;
+            border-top: none !important;
+        }
+
+        table.dataTable tbody td {
+            padding: 1rem 1.25rem !important;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border-color) !important;
+            vertical-align: middle;
+            background: var(--card-bg) !important;
+            transition: background 0.15s ease;
+        }
+
+        table.dataTable tbody tr:hover td {
+            background: var(--primary-light) !important;
+        }
+
+        table.dataTable tbody tr:last-child td {
+            border-bottom: none !important;
+        }
+
+        /* Full-Screen Glassmorphism DataTables Loading Backdrop with 3 Horizontal Dots */
+        .dataTables_wrapper .dataTables_processing {
+            position: fixed !important;
+            inset: 0 !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: rgba(15, 23, 42, 0.55) !important;
+            backdrop-filter: blur(10px) !important;
+            -webkit-backdrop-filter: blur(10px) !important;
+            z-index: 99999 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            color: #FFFFFF !important;
+            font-size: 0.9375rem !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.02em !important;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.5) !important;
+        }
+
+        .dataTables_wrapper .dataTables_processing[style*="display: none"],
+        .dataTables_wrapper .dataTables_processing[style*="display:none"] {
+            display: none !important;
+        }
+
+        /* Hide duplicate default DataTables inner spinner/dots */
+        .dataTables_wrapper .dataTables_processing > div {
+            display: none !important;
+        }
+
+        /* Single 3 Horizontal Pulsing Wave Dots */
+        .dataTables_wrapper .dataTables_processing::before {
+            content: '' !important;
+            width: 14px !important;
+            height: 14px !important;
+            background: #3B82F6 !important;
+            border-radius: 50% !important;
+            border: none !important;
+            animation: horizontalDotPulse 1.4s infinite ease-in-out both !important;
+            animation-delay: -0.16s !important;
+            box-shadow: -24px 0 0 #60A5FA, 24px 0 0 #93C5FD, 0 0 14px rgba(59, 130, 246, 0.8) !important;
+            margin-top: 1.25rem !important;
+            order: 2 !important;
+        }
+
+        /* Pagination & Info */
+        .dataTables_wrapper .dataTables_info {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            padding-top: 0.75rem;
+        }
+
+        .dataTables_wrapper .dataTables_paginate {
+            padding-top: 0.5rem;
+            display: flex;
+            gap: 0.35rem;
+            align-items: center;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            border: 1px solid var(--border-color) !important;
+            background: var(--card-bg) !important;
+            color: var(--text-main) !important;
+            border-radius: var(--radius-md) !important;
+            padding: 0.4rem 0.75rem !important;
+            font-size: 0.8125rem !important;
+            font-weight: 600 !important;
+            cursor: pointer !important;
+            transition: all 0.15s ease !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: var(--bg-body) !important;
+            color: var(--primary) !important;
+            border-color: var(--primary) !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+            background: var(--primary) !important;
+            color: #ffffff !important;
+            border-color: var(--primary) !important;
+            box-shadow: 0 4px 10px -2px rgba(37, 99, 235, 0.4) !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+        .dataTables_wrapper .dataTables_paginate .paginate_button.disabled:hover {
+            opacity: 0.4 !important;
+            cursor: not-allowed !important;
+            background: var(--bg-body) !important;
+            border-color: var(--border-color) !important;
+            color: var(--text-light) !important;
+        }
+
+        /* Reusable UI Components */
+        .table-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tbl-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.65rem;
+            border-radius: var(--radius-md);
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .tbl-btn-edit {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: rgba(37, 99, 235, 0.2);
+        }
+        .tbl-btn-edit:hover {
+            background: var(--primary);
+            color: #ffffff;
+        }
+
+        .tbl-btn-delete {
+            background: var(--danger-bg);
+            color: var(--danger);
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+        .tbl-btn-delete:hover {
+            background: var(--danger);
+            color: #ffffff;
+        }
+
+        .brand-avatar-mini {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #2563EB, #6366F1);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .category-icon-box {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--info-bg);
+            color: var(--info);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .code-pill {
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-family: ui-monospace, monospace;
+            font-size: 0.75rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Custom Tabs Component */
+        .nav-tabs-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+            overflow-x: auto;
+        }
+
+        .tab-nav-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.15rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .tab-nav-link:hover {
+            color: var(--text-main);
+            background: var(--bg-body);
+        }
+
+        .tab-nav-link.active {
+            color: var(--primary);
+            background: var(--primary-light);
+            font-weight: 700;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        /* Form Styles for Modals */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.45rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.65rem 0.875rem;
+            font-size: 0.875rem;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-body);
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+            background: var(--card-bg);
+        }
+
+        .form-error {
+            display: block;
+            color: var(--danger);
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 0.35rem;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 0.65rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-body);
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+            padding: 0.65rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: var(--card-bg);
+            color: var(--text-main);
+            border-color: var(--text-light);
         }
 
         /* Responsive Breakpoints */
@@ -776,6 +1200,7 @@
         }
     </style>
     @yield('styles')
+    @stack('styles')
 </head>
 <body>
 
@@ -796,22 +1221,40 @@
                 <span class="nav-text">Dashboard</span>
             </a>
 
-            <a href="#" class="nav-item" onclick="showToast('info', 'Products Module', 'Navigating to catalog management...'); return false;">
-                <i data-lucide="package" class="nav-icon"></i>
-                <span class="nav-text">Products</span>
-                <span class="nav-badge">124</span>
-            </a>
-
             <a href="#" class="nav-item" onclick="showToast('info', 'Orders Module', 'Fetching live orders list...'); return false;">
                 <i data-lucide="shopping-cart" class="nav-icon"></i>
                 <span class="nav-text">Orders</span>
                 <span class="nav-badge" style="background: var(--warning-bg); color: var(--warning);">18</span>
             </a>
 
-            <a href="#" class="nav-item" onclick="showToast('info', 'Categories', 'Categories directory loaded.'); return false;">
+            <span class="nav-section-title">Master Data</span>
+
+            <a href="{{ route('admin.products.index') }}" class="nav-item {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
+                <i data-lucide="package" class="nav-icon"></i>
+                <span class="nav-text">Products</span>
+            </a>
+
+            <a href="{{ route('admin.categories.index') }}" class="nav-item {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
                 <i data-lucide="grid" class="nav-icon"></i>
                 <span class="nav-text">Categories</span>
             </a>
+
+            <a href="{{ route('admin.brands.index') }}" class="nav-item {{ request()->routeIs('admin.brands.*') ? 'active' : '' }}">
+                <i data-lucide="tag" class="nav-icon"></i>
+                <span class="nav-text">Brands</span>
+            </a>
+
+            <a href="{{ route('admin.attributes.index') }}" class="nav-item {{ request()->routeIs('admin.attributes.*') ? 'active' : '' }}">
+                <i data-lucide="sliders" class="nav-icon"></i>
+                <span class="nav-text">Attributes</span>
+            </a>
+
+            <a href="{{ route('admin.regions.index') }}" class="nav-item {{ request()->routeIs('admin.regions.*') ? 'active' : '' }}">
+                <i data-lucide="map-pin" class="nav-icon"></i>
+                <span class="nav-text">Regional Data</span>
+            </a>
+
+            <span class="nav-section-title">Users</span>
 
             <a href="#" class="nav-item" onclick="showToast('info', 'Customers', 'Customer relationship view active.'); return false;">
                 <i data-lucide="users" class="nav-icon"></i>
@@ -923,9 +1366,10 @@
         </main>
     </div>
 
-    <!-- ===== REUSABLE TOAST CONTAINER & PRELOADER MODAL COMPONENTS ===== -->
+    <!-- ===== REUSABLE TOAST, PRELOADER & CONFIRM MODAL COMPONENTS ===== -->
     <x-toast-container />
     <x-preloader-modal />
+    <x-confirm-delete-modal />
 
     <script>
         // Initialize Lucide Icons
@@ -1064,20 +1508,7 @@
             }
         };
 
-        // ==========================================
-        // GLOBAL PRELOADER / MODAL HELPER FUNCTIONS
-        // ==========================================
-        window.showPreloader = function(title = 'Processing Request', subtext = 'Please wait a moment while we process your data...') {
-            const preloader = document.getElementById('globalPreloader');
-            document.getElementById('preloaderTitle').textContent = title;
-            document.getElementById('preloaderSubtext').textContent = subtext;
-            preloader.classList.add('show');
-        };
 
-        window.hidePreloader = function() {
-            const preloader = document.getElementById('globalPreloader');
-            preloader.classList.remove('show');
-        };
 
         // Flash message listeners from Laravel Session
         @if(session('success'))
@@ -1091,5 +1522,6 @@
         @endif
     </script>
     @yield('scripts')
+    @stack('scripts')
 </body>
 </html>
