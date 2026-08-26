@@ -9,6 +9,10 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\RegionController;
+use App\Http\Controllers\Admin\InventoryController;
+use App\Http\Controllers\Admin\ActivityLogController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\RoleController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -34,6 +38,26 @@ Route::middleware('auth')->group(function () {
             Route::resource('attributes', AttributeController::class)->except(['create', 'show']);
             Route::post('attributes/{attribute}/values', [AttributeController::class, 'storeValue'])->name('attributes.values.store');
             Route::get('regions', [RegionController::class, 'index'])->name('regions.index');
+        });
+
+        // Inventory & Stock Movements
+        Route::prefix('admin/inventory')->name('admin.inventory.')->group(function () {
+            Route::get('/', [InventoryController::class, 'index'])->name('index');
+            Route::post('/adjust', [InventoryController::class, 'adjustStock'])->name('adjust');
+            Route::get('/variant/{variant}', [InventoryController::class, 'getVariant'])->name('variant');
+        });
+
+        // System & Activity Logs
+        Route::prefix('admin/system')->name('admin.')->group(function () {
+            Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+        });
+
+        // User & Access Control Management
+        Route::prefix('admin')->name('admin.')->group(function () {
+            Route::patch('users/{user}/toggle-status', [UserController::class, 'toggleStatus'])->name('users.toggle-status');
+            Route::post('users/{user}/reset-password', [UserController::class, 'resetPassword'])->name('users.reset-password');
+            Route::resource('users', UserController::class)->except(['create', 'show']);
+            Route::resource('roles', RoleController::class)->except(['create', 'show']);
         });
 
         Route::get('admin/master_data/{path?}', function ($path = '') {

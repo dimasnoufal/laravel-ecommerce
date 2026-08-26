@@ -100,22 +100,9 @@
                 { data: 'values_pills', name: 'values_pills', orderable: false, searchable: false },
                 { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
             ],
-            language: {
-                processing: "Memuat data atribut...",
-                search: "",
-                searchPlaceholder: "Cari atribut...",
-                lengthMenu: "Tampilkan _MENU_ data",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ atribut",
-                infoEmpty: "Tidak ada data atribut",
-                infoFiltered: "(difilter dari _MAX_ total data)",
-                zeroRecords: "Tidak ada data yang cocok",
-                paginate: {
-                    first: "Awal",
-                    last: "Akhir",
-                    next: "Berikutnya",
-                    previous: "Sebelumnya"
-                }
-            },
+            language: createDataTableLanguage('Memuat Data Atribut', 'Mengambil daftar atribut dan variasi pilihan...', {
+                searchPlaceholder: "Cari atribut..."
+            }),
             drawCallback: function() {
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
@@ -192,7 +179,7 @@
     }
 
     function editAttribute(id) {
-        showPreloader('Mengambil Data', 'Mohon tunggu sebentar...');
+        showPreloader('Mengambil Data Atribut', 'Menyiapkan opsi nilai dan spesifikasi atribut...');
         $.get(`/admin/master-data/attributes/${id}/edit`, function(response) {
             hidePreloader();
             $('#attributeForm')[0].reset();
@@ -217,12 +204,15 @@
 
     function handleAttributeSubmit(e) {
         e.preventDefault();
+        
+        let id = $('#attributeId').val();
         $('#saveAttributeBtn').prop('disabled', true);
         $('#saveAttributeBtnText').text('Menyimpan...');
         $('#attributeNameError').hide();
         $('#attributeValuesError').hide();
         
-        let id = $('#attributeId').val();
+        showPreloader(id ? 'Memperbarui Atribut' : 'Menyimpan Atribut', 'Sedang menyimpan atribut dan pilihan nilainya ke database...');
+        
         let url = id ? `/admin/master-data/attributes/${id}` : `{{ route('admin.attributes.store') }}`;
         let type = id ? 'PUT' : 'POST';
         
@@ -231,11 +221,13 @@
             type: type,
             data: $('#attributeForm').serialize(),
             success: function(response) {
+                hidePreloader();
                 closeDrawer('attributeDrawer');
                 showToast('success', 'Berhasil', response.message);
                 attributesTable.ajax.reload(null, false);
             },
             error: function(xhr) {
+                hidePreloader();
                 $('#saveAttributeBtn').prop('disabled', false);
                 $('#saveAttributeBtnText').text(id ? 'Perbarui Atribut' : 'Simpan Atribut');
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
@@ -256,7 +248,7 @@
             showReason: false,
             confirmBtnText: 'Ya, Hapus Atribut',
             onConfirm: function(reason) {
-                showPreloader('Menghapus Data', 'Memproses penghapusan atribut...');
+                showPreloader('Menghapus Atribut', 'Memproses penghapusan atribut dan variasi nilainya...');
                 $.ajax({
                     url: `/admin/master-data/attributes/${id}`,
                     type: 'DELETE',

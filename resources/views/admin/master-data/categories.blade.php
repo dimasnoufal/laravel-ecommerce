@@ -89,22 +89,9 @@
                 { data: 'slug_pill', name: 'slug' },
                 { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
             ],
-            language: {
-                processing: "Memuat data kategori...",
-                search: "",
-                searchPlaceholder: "Cari kategori...",
-                lengthMenu: "Tampilkan _MENU_ data",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ kategori",
-                infoEmpty: "Tidak ada data kategori",
-                infoFiltered: "(difilter dari _MAX_ total data)",
-                zeroRecords: "Tidak ada data yang cocok",
-                paginate: {
-                    first: "Awal",
-                    last: "Akhir",
-                    next: "Berikutnya",
-                    previous: "Sebelumnya"
-                }
-            },
+            language: createDataTableLanguage('Memuat Data Kategori', 'Mengambil daftar hierarki kategori produk...', {
+                searchPlaceholder: "Cari kategori..."
+            }),
             drawCallback: function() {
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
@@ -125,7 +112,7 @@
     }
 
     function editCategory(id) {
-        showPreloader('Mengambil Data', 'Mohon tunggu sebentar...');
+        showPreloader('Mengambil Data Kategori', 'Menyiapkan formulir dan hierarki data kategori...');
         $.get(`/admin/master-data/categories/${id}/edit`, function(response) {
             hidePreloader();
             $('#categoryForm')[0].reset();
@@ -147,12 +134,15 @@
 
     function handleCategorySubmit(e) {
         e.preventDefault();
+        
+        let id = $('#categoryId').val();
         $('#saveCategoryBtn').prop('disabled', true);
         $('#saveCategoryBtnText').text('Menyimpan...');
         $('#categoryNameError').hide();
         $('#categoryParentError').hide();
         
-        let id = $('#categoryId').val();
+        showPreloader(id ? 'Memperbarui Kategori' : 'Menyimpan Kategori', 'Sedang menyimpan data kategori ke database...');
+        
         let url = id ? `/admin/master-data/categories/${id}` : `{{ route('admin.categories.store') }}`;
         let type = id ? 'PUT' : 'POST';
         
@@ -161,11 +151,13 @@
             type: type,
             data: $('#categoryForm').serialize(),
             success: function(response) {
+                hidePreloader();
                 closeDrawer('categoryDrawer');
                 showToast('success', 'Berhasil', response.message);
                 categoriesTable.ajax.reload(null, false);
             },
             error: function(xhr) {
+                hidePreloader();
                 $('#saveCategoryBtn').prop('disabled', false);
                 $('#saveCategoryBtnText').text(id ? 'Perbarui' : 'Simpan');
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
@@ -189,7 +181,7 @@
             showReason: false,
             confirmBtnText: 'Ya, Hapus Kategori',
             onConfirm: function(reason) {
-                showPreloader('Menghapus Data', 'Memproses penghapusan kategori...');
+                showPreloader('Menghapus Kategori', 'Memproses penghapusan kategori dari database...');
                 $.ajax({
                     url: `/admin/master-data/categories/${id}`,
                     type: 'DELETE',

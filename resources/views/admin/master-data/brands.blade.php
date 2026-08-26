@@ -78,22 +78,9 @@
                 { data: 'slug_pill', name: 'slug' },
                 { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
             ],
-            language: {
-                processing: "Memuat data brand...",
-                search: "",
-                searchPlaceholder: "Cari brand...",
-                lengthMenu: "Tampilkan _MENU_ data",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ brand",
-                infoEmpty: "Tidak ada data brand",
-                infoFiltered: "(difilter dari _MAX_ total data)",
-                zeroRecords: "Tidak ada data yang cocok",
-                paginate: {
-                    first: "Awal",
-                    last: "Akhir",
-                    next: "Berikutnya",
-                    previous: "Sebelumnya"
-                }
-            },
+            language: createDataTableLanguage('Memuat Data Brand', 'Mengambil daftar brand katalog...', {
+                searchPlaceholder: "Cari brand..."
+            }),
             drawCallback: function() {
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
@@ -112,7 +99,7 @@
     }
 
     function editBrand(id) {
-        showPreloader('Mengambil Data', 'Mohon tunggu sebentar...');
+        showPreloader('Mengambil Data Brand', 'Menyiapkan formulir dan informasi brand...');
         $.get(`/admin/master-data/brands/${id}/edit`, function(response) {
             hidePreloader();
             $('#brandForm')[0].reset();
@@ -132,11 +119,14 @@
 
     function handleBrandSubmit(e) {
         e.preventDefault();
+        
+        let id = $('#brandId').val();
         $('#saveBrandBtn').prop('disabled', true);
         $('#saveBrandBtnText').text('Menyimpan...');
         $('#brandNameError').hide();
         
-        let id = $('#brandId').val();
+        showPreloader(id ? 'Memperbarui Brand' : 'Menyimpan Brand', 'Sedang menyimpan perubahan nama brand ke database...');
+        
         let url = id ? `/admin/master-data/brands/${id}` : `{{ route('admin.brands.store') }}`;
         let type = id ? 'PUT' : 'POST';
         
@@ -145,11 +135,13 @@
             type: type,
             data: $('#brandForm').serialize(),
             success: function(response) {
+                hidePreloader();
                 closeDrawer('brandDrawer');
                 showToast('success', 'Berhasil', response.message);
                 brandsTable.ajax.reload(null, false);
             },
             error: function(xhr) {
+                hidePreloader();
                 $('#saveBrandBtn').prop('disabled', false);
                 $('#saveBrandBtnText').text(id ? 'Perbarui' : 'Simpan');
                 if (xhr.responseJSON && xhr.responseJSON.errors && xhr.responseJSON.errors.name) {
@@ -168,7 +160,7 @@
             showReason: false,
             confirmBtnText: 'Ya, Hapus Brand',
             onConfirm: function(reason) {
-                showPreloader('Menghapus Data', 'Memproses penghapusan brand...');
+                showPreloader('Menghapus Brand', 'Memproses penghapusan brand dari katalog...');
                 $.ajax({
                     url: `/admin/master-data/brands/${id}`,
                     type: 'DELETE',

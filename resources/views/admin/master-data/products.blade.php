@@ -11,7 +11,7 @@
                 Kelola master katalog produk, galeri foto, kategori, brand, dan varian SKU harga & stok.
             </p>
         </div>
-        <a href="{{ route('admin.products.create') }}" class="btn-primary" onclick="showPreloader('Membuka Formulir', 'Menyiapkan form katalog & varian...')">
+        <a href="{{ route('admin.products.create') }}" class="btn-primary">
             <i data-lucide="plus" style="width: 18px; height: 18px;"></i>
             <span>Tambah Produk</span>
         </a>
@@ -65,22 +65,9 @@
                 { data: 'status_pill', name: 'is_active', className: 'text-center' },
                 { data: 'action', name: 'action', orderable: false, searchable: false, className: 'text-center' }
             ],
-            language: {
-                processing: "Memuat data produk...",
-                search: "",
-                searchPlaceholder: "Cari nama produk...",
-                lengthMenu: "Tampilkan _MENU_ data",
-                info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ produk",
-                infoEmpty: "Tidak ada data produk",
-                infoFiltered: "(difilter dari _MAX_ total data)",
-                zeroRecords: "Tidak ada data yang cocok",
-                paginate: {
-                    first: "Awal",
-                    last: "Akhir",
-                    next: "Berikutnya",
-                    previous: "Sebelumnya"
-                }
-            },
+            language: createDataTableLanguage('Memuat Data Produk', 'Mengambil daftar produk, varian, dan status stok...', {
+                searchPlaceholder: "Cari nama produk..."
+            }),
             drawCallback: function() {
                 if (typeof lucide !== 'undefined') {
                     lucide.createIcons();
@@ -96,7 +83,7 @@
             showReason: false,
             confirmBtnText: 'Ya, Hapus Produk',
             onConfirm: function(reason) {
-                showPreloader('Menghapus Produk', 'Memproses penghapusan katalog dan varian...');
+                showPreloader('Menghapus Produk', 'Memproses penghapusan katalog dan varian dari database...');
                 $.ajax({
                     url: `/admin/master-data/products/${id}`,
                     type: 'DELETE',

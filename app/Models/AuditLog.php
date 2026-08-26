@@ -33,4 +33,19 @@ class AuditLog extends Model
     {
         return $this->morphTo();
     }
+
+    public static function log($action, $description = null, $auditable = null, array $metadata = [])
+    {
+        return static::create([
+            'user_id' => auth()->id(),
+            'action' => is_object($action) ? $action->value : $action,
+            'auditable_type' => $auditable ? get_class($auditable) : null,
+            'auditable_id' => $auditable?->id,
+            'description' => $description,
+            'metadata' => !empty($metadata) ? $metadata : null,
+            'ip_address' => request()->ip(),
+            'user_agent' => request()->userAgent(),
+            'created_at' => now(),
+        ]);
+    }
 }

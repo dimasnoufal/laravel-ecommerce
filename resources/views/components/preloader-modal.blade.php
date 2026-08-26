@@ -38,9 +38,15 @@
 </style>
 
 <script>
+    let preloaderHideTimer = null;
+
     window.showPreloader = function(title = 'Memproses Permintaan', subtext = 'Mohon tunggu sebentar...', targetId = '{{ $id }}') {
         const preloader = document.getElementById(targetId);
         if (!preloader) return;
+        if (preloaderHideTimer) {
+            clearTimeout(preloaderHideTimer);
+            preloaderHideTimer = null;
+        }
         const titleEl = document.getElementById(targetId + 'Title');
         const subtextEl = document.getElementById(targetId + 'Subtext');
         if (titleEl) titleEl.textContent = title;
@@ -55,8 +61,12 @@
         const preloader = document.getElementById(targetId);
         if (!preloader) return;
         preloader.style.opacity = '0';
-        setTimeout(() => {
+        if (preloaderHideTimer) {
+            clearTimeout(preloaderHideTimer);
+        }
+        preloaderHideTimer = setTimeout(() => {
             preloader.style.display = 'none';
+            preloaderHideTimer = null;
         }, 250);
     };
 </script>

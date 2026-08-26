@@ -888,9 +888,10 @@
             });
         }
 
+        const id = $('#productId').val();
         $('#saveProductBtn').prop('disabled', true);
         $('#saveProductBtnText').text('Menyimpan...');
-        showPreloader('Menyimpan Produk', 'Sedang memproses katalog, foto, dan varian...');
+        showPreloader(id ? 'Memperbarui Produk' : 'Menyimpan Produk', 'Sedang memproses katalog, foto, dan varian ke database...');
 
         const formData = new FormData($('#productForm')[0]);
         // Remove any auto-captured images from FormData

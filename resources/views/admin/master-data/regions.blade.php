@@ -136,22 +136,7 @@
             }
         });
 
-        const dtLanguage = {
-            processing: "Memuat data wilayah...",
-            search: "",
-            searchPlaceholder: "Cari data...",
-            lengthMenu: "Tampilkan _MENU_ data",
-            info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-            infoEmpty: "Tidak ada data",
-            infoFiltered: "(difilter dari _MAX_ data)",
-            zeroRecords: "Data tidak ditemukan",
-            paginate: {
-                first: "Awal",
-                last: "Akhir",
-                next: "Berikutnya",
-                previous: "Sebelumnya"
-            }
-        };
+        const dtLanguage = createDataTableLanguage('Memuat Data Wilayah', 'Mengambil direktori administratif wilayah...');
 
         // Initialize Countries Table First
         datatables.countries = $('#countriesTable').DataTable({
@@ -178,22 +163,7 @@
         $('.tab-pane').removeClass('active');
         $(`#tab-${type}`).addClass('active');
 
-        const dtLanguage = {
-            processing: "Memuat data...",
-            search: "",
-            searchPlaceholder: "Cari data...",
-            lengthMenu: "Tampilkan _MENU_ data",
-            info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
-            infoEmpty: "Tidak ada data",
-            infoFiltered: "(difilter dari _MAX_ data)",
-            zeroRecords: "Data tidak ditemukan",
-            paginate: {
-                first: "Awal",
-                last: "Akhir",
-                next: "Berikutnya",
-                previous: "Sebelumnya"
-            }
-        };
+        const dtLanguage = createDataTableLanguage('Memuat Data Wilayah', 'Mengambil direktori administratif wilayah...');
 
         // Lazy load datatable for tab when clicked
         if (!datatables[type]) {

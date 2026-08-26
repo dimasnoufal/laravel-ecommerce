@@ -649,7 +649,10 @@
             box-shadow: var(--shadow-sm);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            align-items: center;
+            text-align: center;
+            justify-content: center;
+            gap: 0.25rem;
             transition: all 0.25s ease;
         }
         .kpi-card:hover {
@@ -660,8 +663,10 @@
         .kpi-header {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.75rem;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            width: 100%;
         }
         .kpi-label {
             font-size: 0.75rem;
@@ -860,57 +865,21 @@
             border-bottom: none !important;
         }
 
-        /* Full-Screen Glassmorphism DataTables Loading Backdrop with 3 Horizontal Dots */
+        @keyframes horizontalDotPulse {
+            0%, 80%, 100% {
+                transform: scale(0.45);
+                opacity: 0.35;
+            }
+            40% {
+                transform: scale(1.25);
+                opacity: 1;
+                filter: brightness(1.2);
+            }
+        }
+
+        /* Hide default DataTables processing element completely to prevent duplicate/split indicators */
         .dataTables_wrapper .dataTables_processing {
-            position: fixed !important;
-            inset: 0 !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            background: rgba(15, 23, 42, 0.55) !important;
-            backdrop-filter: blur(10px) !important;
-            -webkit-backdrop-filter: blur(10px) !important;
-            z-index: 99999 !important;
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            justify-content: center !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
-            box-shadow: none !important;
-            border-radius: 0 !important;
-            color: #FFFFFF !important;
-            font-size: 0.9375rem !important;
-            font-weight: 600 !important;
-            letter-spacing: 0.02em !important;
-            text-shadow: 0 2px 8px rgba(0,0,0,0.5) !important;
-        }
-
-        .dataTables_wrapper .dataTables_processing[style*="display: none"],
-        .dataTables_wrapper .dataTables_processing[style*="display:none"] {
             display: none !important;
-        }
-
-        /* Hide duplicate default DataTables inner spinner/dots */
-        .dataTables_wrapper .dataTables_processing > div {
-            display: none !important;
-        }
-
-        /* Single 3 Horizontal Pulsing Wave Dots */
-        .dataTables_wrapper .dataTables_processing::before {
-            content: '' !important;
-            width: 14px !important;
-            height: 14px !important;
-            background: #3B82F6 !important;
-            border-radius: 50% !important;
-            border: none !important;
-            animation: horizontalDotPulse 1.4s infinite ease-in-out both !important;
-            animation-delay: -0.16s !important;
-            box-shadow: -24px 0 0 #60A5FA, 24px 0 0 #93C5FD, 0 0 14px rgba(59, 130, 246, 0.8) !important;
-            margin-top: 1.25rem !important;
-            order: 2 !important;
         }
 
         /* Pagination & Info */
@@ -1254,11 +1223,16 @@
                 <span class="nav-text">Regional Data</span>
             </a>
 
-            <span class="nav-section-title">Users</span>
+            <span class="nav-section-title">User Management</span>
 
-            <a href="#" class="nav-item" onclick="showToast('info', 'Customers', 'Customer relationship view active.'); return false;">
+            <a href="{{ route('admin.users.index') }}" class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                 <i data-lucide="users" class="nav-icon"></i>
-                <span class="nav-text">Customers</span>
+                <span class="nav-text">Users</span>
+            </a>
+
+            <a href="{{ route('admin.roles.index') }}" class="nav-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
+                <i data-lucide="shield" class="nav-icon"></i>
+                <span class="nav-text">Roles & Permissions</span>
             </a>
 
             <span class="nav-section-title">Analytics & Finance</span>
@@ -1268,7 +1242,7 @@
                 <span class="nav-text">Analytics</span>
             </a>
 
-            <a href="#" class="nav-item" onclick="showToast('info', 'Inventory', 'Stock movements and warehouse status.'); return false;">
+            <a href="{{ route('admin.inventory.index') }}" class="nav-item {{ request()->routeIs('admin.inventory.*') ? 'active' : '' }}">
                 <i data-lucide="layers" class="nav-icon"></i>
                 <span class="nav-text">Inventory</span>
             </a>
@@ -1279,6 +1253,11 @@
             </a>
 
             <span class="nav-section-title">System</span>
+
+            <a href="{{ route('admin.activity-logs.index') }}" class="nav-item {{ request()->routeIs('admin.activity-logs.*') ? 'active' : '' }}">
+                <i data-lucide="activity" class="nav-icon"></i>
+                <span class="nav-text">Activity Logs</span>
+            </a>
 
             <a href="#" class="nav-item" onclick="showToast('info', 'Settings', 'Admin settings panel.'); return false;">
                 <i data-lucide="settings" class="nav-icon"></i>
@@ -1509,6 +1488,83 @@
         };
 
 
+
+        // ==========================================
+        // STANDARDIZED DATATABLES PRELOADER INTEGRATION
+        // ==========================================
+        window.createDataTableLanguage = function(title = 'Memuat Data', subtext = 'Sedang mengambil dan menyinkronkan data terbaru...', overrides = {}) {
+            return {
+                search: "_INPUT_",
+                searchPlaceholder: overrides.searchPlaceholder || "Cari data...",
+                lengthMenu: overrides.lengthMenu || "Tampilkan _MENU_ data",
+                info: overrides.info || "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                infoEmpty: overrides.infoEmpty || "Tidak ada data",
+                infoFiltered: overrides.infoFiltered || "(difilter dari _MAX_ total data)",
+                zeroRecords: overrides.zeroRecords || "Tidak ada data yang cocok",
+                paginate: overrides.paginate || {
+                    first: "Awal",
+                    last: "Akhir",
+                    next: "Berikutnya",
+                    previous: "Sebelumnya"
+                },
+                ...overrides
+            };
+        };
+
+        if (typeof $.fn.dataTable !== 'undefined') {
+            $.extend(true, $.fn.dataTable.defaults, {
+                processing: false,
+                searchDelay: 400,
+                language: window.createDataTableLanguage()
+            });
+
+            const dtPreloaderTitleMap = {
+                'productsTable': { title: 'Memuat Data Produk', subtext: 'Mengambil daftar produk, varian, dan status stok...' },
+                'categoriesTable': { title: 'Memuat Data Kategori', subtext: 'Mengambil daftar hierarki kategori produk...' },
+                'brandsTable': { title: 'Memuat Data Brand', subtext: 'Mengambil daftar brand katalog...' },
+                'attributesTable': { title: 'Memuat Data Atribut', subtext: 'Mengambil daftar atribut dan variasi pilihan...' },
+                'stocksTable': { title: 'Memuat Data Stok SKU', subtext: 'Mengambil status stok fisik seluruh varian produk...' },
+                'movementsTable': { title: 'Memuat Buku Mutasi', subtext: 'Mengambil riwayat arus keluar-masuk stok barang...' },
+                'activityLogsTable': { title: 'Memuat Log Aktivitas', subtext: 'Merekap riwayat audit trail dan aktivitas sistem...' },
+                'countriesTable': { title: 'Memuat Data Wilayah', subtext: 'Mengambil data negara dan kode telepon...' },
+                'provincesTable': { title: 'Memuat Data Provinsi', subtext: 'Mengambil data provinsi...' },
+                'regenciesTable': { title: 'Memuat Data Kota/Kabupaten', subtext: 'Mengambil data kota dan kabupaten...' },
+                'districtsTable': { title: 'Memuat Data Kecamatan', subtext: 'Mengambil data kecamatan...' },
+                'villagesTable': { title: 'Memuat Data Desa/Kelurahan', subtext: 'Mengambil data desa dan kelurahan...' }
+            };
+
+            $(document).on('preXhr.dt', function(e, settings, data) {
+                let title = 'Memuat Data';
+                let subtext = 'Sedang mengambil dan menyinkronkan data terbaru...';
+
+                const tableId = settings.sTableId;
+                if (tableId && dtPreloaderTitleMap[tableId]) {
+                    title = dtPreloaderTitleMap[tableId].title;
+                    subtext = dtPreloaderTitleMap[tableId].subtext;
+                }
+
+                if (settings.oInit) {
+                    if (settings.oInit.preloaderTitle) title = settings.oInit.preloaderTitle;
+                    if (settings.oInit.preloaderSubtext) subtext = settings.oInit.preloaderSubtext;
+                }
+
+                if (settings.nTable) {
+                    const $tbl = $(settings.nTable);
+                    if ($tbl.attr('data-preloader-title')) title = $tbl.attr('data-preloader-title');
+                    if ($tbl.attr('data-preloader-subtext')) subtext = $tbl.attr('data-preloader-subtext');
+                }
+
+                if (typeof window.showPreloader === 'function') {
+                    window.showPreloader(title, subtext);
+                }
+            });
+
+            $(document).on('xhr.dt draw.dt error.dt', function(e, settings, json, xhr) {
+                if (typeof window.hidePreloader === 'function') {
+                    window.hidePreloader();
+                }
+            });
+        }
 
         // Flash message listeners from Laravel Session
         @if(session('success'))
