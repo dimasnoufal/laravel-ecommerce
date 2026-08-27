@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\InventoryController;
 use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\ShippingController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -38,6 +39,20 @@ Route::middleware('auth')->group(function () {
             Route::resource('attributes', AttributeController::class)->except(['create', 'show']);
             Route::post('attributes/{attribute}/values', [AttributeController::class, 'storeValue'])->name('attributes.values.store');
             Route::get('regions', [RegionController::class, 'index'])->name('regions.index');
+
+            // Shipping & Logistics Master Data
+            Route::get('shipping', [ShippingController::class, 'index'])->name('shipping.index');
+            Route::post('shipping/carriers', [ShippingController::class, 'storeCarrier'])->name('shipping.carriers.store');
+            Route::get('shipping/carriers/{carrier}/edit', [ShippingController::class, 'editCarrier'])->name('shipping.carriers.edit');
+            Route::put('shipping/carriers/{carrier}', [ShippingController::class, 'updateCarrier'])->name('shipping.carriers.update');
+            Route::patch('shipping/carriers/{carrier}/toggle-status', [ShippingController::class, 'toggleCarrierStatus'])->name('shipping.carriers.toggle-status');
+            Route::delete('shipping/carriers/{carrier}', [ShippingController::class, 'destroyCarrier'])->name('shipping.carriers.destroy');
+            Route::get('shipping/carriers/{carrier}/services', [ShippingController::class, 'getCarrierServices'])->name('shipping.carriers.services');
+            Route::post('shipping/services', [ShippingController::class, 'storeService'])->name('shipping.services.store');
+            Route::get('shipping/services/{service}/edit', [ShippingController::class, 'editService'])->name('shipping.services.edit');
+            Route::put('shipping/services/{service}', [ShippingController::class, 'updateService'])->name('shipping.services.update');
+            Route::patch('shipping/services/{service}/toggle-status', [ShippingController::class, 'toggleServiceStatus'])->name('shipping.services.toggle-status');
+            Route::delete('shipping/services/{service}', [ShippingController::class, 'destroyService'])->name('shipping.services.destroy');
         });
 
         // Inventory & Stock Movements

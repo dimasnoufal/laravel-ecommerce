@@ -1223,6 +1223,11 @@
                 <span class="nav-text">Regional Data</span>
             </a>
 
+            <a href="{{ route('admin.shipping.index') }}" class="nav-item {{ request()->routeIs('admin.shipping.*') ? 'active' : '' }}">
+                <i data-lucide="truck" class="nav-icon"></i>
+                <span class="nav-text">Shipping & Logistics</span>
+            </a>
+
             <span class="nav-section-title">User Management</span>
 
             <a href="{{ route('admin.users.index') }}" class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
