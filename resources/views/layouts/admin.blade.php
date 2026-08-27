@@ -1190,10 +1190,10 @@
                 <span class="nav-text">Dashboard</span>
             </a>
 
-            <a href="#" class="nav-item" onclick="showToast('info', 'Orders Module', 'Fetching live orders list...'); return false;">
+            <a href="{{ route('admin.orders.index') }}" class="nav-item {{ request()->routeIs('admin.orders.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Pesanan', 'Mengambil daftar transaksi pesanan...');">
                 <i data-lucide="shopping-cart" class="nav-icon"></i>
                 <span class="nav-text">Orders</span>
-                <span class="nav-badge" style="background: var(--warning-bg); color: var(--warning);">18</span>
+                <span class="nav-badge" style="background: var(--primary-light); color: var(--primary); font-weight: 700;">{{ \App\Models\Order::whereIn('status', ['PENDING', 'PROCESSING', 'SHIPPED'])->count() }}</span>
             </a>
 
             <span class="nav-section-title">Master Data</span>
@@ -1242,7 +1242,7 @@
 
             <span class="nav-section-title">Analytics & Finance</span>
 
-            <a href="#" class="nav-item" onclick="showToast('info', 'Analytics', 'Loading revenue and conversion metrics.'); return false;">
+            <a href="{{ route('admin.analytics.index') }}" class="nav-item {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}">
                 <i data-lucide="bar-chart-3" class="nav-icon"></i>
                 <span class="nav-text">Analytics</span>
             </a>
@@ -1252,7 +1252,7 @@
                 <span class="nav-text">Inventory</span>
             </a>
 
-            <a href="#" class="nav-item" onclick="showToast('info', 'Reports', 'Generating monthly export report...'); return false;">
+            <a href="{{ route('admin.reports.index') }}" class="nav-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
                 <i data-lucide="file-text" class="nav-icon"></i>
                 <span class="nav-text">Reports</span>
             </a>
@@ -1264,14 +1264,9 @@
                 <span class="nav-text">Activity Logs</span>
             </a>
 
-            <a href="#" class="nav-item" onclick="showToast('info', 'Settings', 'Admin settings panel.'); return false;">
+            <a href="{{ route('admin.settings.index') }}" class="nav-item {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Pengaturan', 'Mengambil konfigurasi sistem & profil toko...');">
                 <i data-lucide="settings" class="nav-icon"></i>
                 <span class="nav-text">Settings</span>
-            </a>
-
-            <a href="#" class="nav-item" onclick="showToast('info', 'Help & Support', 'Documentation and live help desk.'); return false;">
-                <i data-lucide="help-circle" class="nav-icon"></i>
-                <span class="nav-text">Help & Support</span>
             </a>
         </nav>
 

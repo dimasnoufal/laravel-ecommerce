@@ -99,15 +99,21 @@ class ActivityLogController extends Controller
                 })
                 ->addColumn('payload_action', function ($row) {
                     if (empty($row->metadata)) {
-                        return '<span style="color: var(--text-light); font-size: 0.75rem;">-</span>';
+                        return '<span style="color: var(--text-muted); font-size: 0.75rem;">-</span>';
                     }
-                    $jsonStr = htmlspecialchars(json_encode($row->metadata, JSON_PRETTY_PRINT), ENT_QUOTES, 'UTF-8');
-                    return '
-                        <button type="button" class="btn-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.3rem;" onclick="viewPayload(' . $row->id . ', `' . $jsonStr . '`)">
-                            <i data-lucide="code" style="width: 13px; height: 13px;"></i>
-                            <span>Payload</span>
-                        </button>
-                    ';
+                    $payloadJson = htmlspecialchars(json_encode($row->metadata), ENT_QUOTES, 'UTF-8');
+                    $action = htmlspecialchars($row->action, ENT_QUOTES, 'UTF-8');
+                    $description = htmlspecialchars($row->description ?? '', ENT_QUOTES, 'UTF-8');
+
+                    return '<button type="button" class="btn-secondary btn-view-diff" ' .
+                        'data-log-id="' . $row->id . '" ' .
+                        'data-action="' . $action . '" ' .
+                        'data-desc="' . $description . '" ' .
+                        'data-payload="' . $payloadJson . '" ' .
+                        'style="padding: 0.35rem 0.7rem; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.35rem;">' .
+                        '<i data-lucide="file-diff" style="width: 13px; height: 13px;"></i>' .
+                        '<span>Inspeksi Diff</span>' .
+                    '</button>';
                 })
                 ->rawColumns(['created_at_formatted', 'user_info', 'action_badge', 'description_display', 'ip_address_display', 'payload_action'])
                 ->make(true);

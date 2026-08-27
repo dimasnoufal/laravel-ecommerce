@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Model;
 
 class ShippingService extends Model
-{    protected $fillable = [
+{
+    use Auditable;    protected $fillable = [
         'carrier_id',
         'code',
         'name',

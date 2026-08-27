@@ -16,11 +16,9 @@ class Order extends Model
         'shipping_cost',
         'discount_amount',
         'total_amount',
-        'placed_at',
     ];
 
     protected $casts = [
-        'placed_at' => 'datetime',
         'status' => \App\Enums\OrderStatus::class,
     ];
 

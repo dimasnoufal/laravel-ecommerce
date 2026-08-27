@@ -14,8 +14,15 @@ use App\Http\Controllers\Admin\ActivityLogController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\ShippingController;
+use App\Http\Controllers\Admin\AnalyticsController;
+use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\SettingController;
 
 Route::get('/', function () {
+    if (auth()->check()) {
+        return redirect()->route('admin.dashboard');
+    }
     return redirect()->route('login');
 });
 
@@ -30,6 +37,14 @@ Route::middleware('auth')->group(function () {
     // Protected routes for admin
     Route::middleware('role:admin')->group(function () {
         Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+        
+        // Orders Management
+        Route::prefix('admin/orders')->name('admin.orders.')->group(function () {
+            Route::get('/', [OrderController::class, 'index'])->name('index');
+            Route::get('/{order}', [OrderController::class, 'show'])->name('show');
+            Route::post('/{order}/update-status', [OrderController::class, 'updateStatus'])->name('update-status');
+            Route::get('/{order}/invoice', [OrderController::class, 'invoice'])->name('invoice');
+        });
         
         // Master Data
         Route::prefix('admin/master-data')->name('admin.')->group(function () {
@@ -62,9 +77,28 @@ Route::middleware('auth')->group(function () {
             Route::get('/variant/{variant}', [InventoryController::class, 'getVariant'])->name('variant');
         });
 
-        // System & Activity Logs
+        // Analytics & Business Intelligence
+        Route::prefix('admin/analytics')->name('admin.analytics.')->group(function () {
+            Route::get('/', [AnalyticsController::class, 'index'])->name('index');
+            Route::get('/export-live', [AnalyticsController::class, 'exportLive'])->name('export-live');
+            Route::get('/print-live', [AnalyticsController::class, 'printLive'])->name('print-live');
+        });
+
+        // Report Document Archives & Generation
+        Route::prefix('admin/reports')->name('admin.reports.')->group(function () {
+            Route::get('/', [ReportController::class, 'index'])->name('index');
+            Route::post('/generate', [ReportController::class, 'generate'])->name('generate');
+            Route::get('/{report}/download', [ReportController::class, 'download'])->name('download');
+            Route::get('/{report}/print', [ReportController::class, 'printReport'])->name('print');
+            Route::delete('/{report}', [ReportController::class, 'destroy'])->name('destroy');
+        });
+
+        // System, Activity Logs & Settings
         Route::prefix('admin/system')->name('admin.')->group(function () {
             Route::get('/activity-logs', [ActivityLogController::class, 'index'])->name('activity-logs.index');
+            Route::get('/settings', [SettingController::class, 'index'])->name('settings.index');
+            Route::post('/settings', [SettingController::class, 'update'])->name('settings.update');
+            Route::post('/settings/clear-cache', [SettingController::class, 'clearCache'])->name('settings.clear-cache');
         });
 
         // User & Access Control Management

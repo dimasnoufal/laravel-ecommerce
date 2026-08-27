@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
 use Illuminate\Database\Eloquent\Model;
 
 class ShippingCarrier extends Model
-{    protected $fillable = [
+{
+    use Auditable;    protected $fillable = [
         'code',
         'name',
         'tracking_url_template',

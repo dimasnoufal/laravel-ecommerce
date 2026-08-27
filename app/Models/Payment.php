@@ -7,13 +7,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Payment extends Model
 {
-    use SoftDeletes;
     protected $fillable = [
         'order_id',
-        'payment_number',
-        'method',
-        'status',
+        'provider',
+        'provider_reference',
         'amount',
+        'status',
         'paid_at',
         'expired_at',
     ];

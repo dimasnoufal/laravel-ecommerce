@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrderAddress extends Model
 {
-    use SoftDeletes;
+    public $timestamps = false;
+
     protected $fillable = [
         'order_id',
         'address_id',
