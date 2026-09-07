@@ -29,6 +29,34 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @if(isset($initialBrands) && $initialBrands->count() > 0)
+                        @foreach($initialBrands as $brand)
+                            <tr>
+                                <td class="text-center">{{ $loop->iteration }}</td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.65rem;">
+                                        <div class="brand-avatar-mini">{{ strtoupper(substr($brand->name, 0, 2)) }}</div>
+                                        <span style="font-weight: 600; color: var(--text-main);">{{ $brand->name }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <code class="code-pill">{{ $brand->slug }}</code>
+                                </td>
+                                <td class="text-center">
+                                    <div class="table-actions">
+                                        <button type="button" class="tbl-btn tbl-btn-edit" onclick="editBrand({{ $brand->id }})" title="Edit Brand">
+                                            <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
+                                            <span>Edit</span>
+                                        </button>
+                                        <button type="button" class="tbl-btn tbl-btn-delete" onclick="deleteBrand({{ $brand->id }}, '{{ addslashes(htmlspecialchars($brand->name, ENT_QUOTES, 'UTF-8')) }}')" title="Delete Brand">
+                                            <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                                            <span>Hapus</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>
@@ -71,6 +99,8 @@
         brandsTable = $('#brandsTable').DataTable({
             processing: true,
             serverSide: true,
+            deferLoading: {{ $totalBrands ?? 0 }},
+            order: [],
             ajax: "{{ route('admin.brands.index') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },

@@ -17,10 +17,10 @@ class BrandController extends Controller
      */
     public function index(Request $request)
     {
+        $query = Brand::query()->latest('id');
+
         if ($request->ajax()) {
-            $data = Brand::query();
-            
-            return DataTables::of($data)
+            return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('name_badge', function ($row) {
                     return '<div style="display: flex; align-items: center; gap: 0.65rem;">
@@ -48,7 +48,10 @@ class BrandController extends Controller
                 ->make(true);
         }
 
-        return view('admin.master-data.brands');
+        $initialBrands = (clone $query)->take(10)->get();
+        $totalBrands = Brand::count();
+
+        return view('admin.master-data.brands', compact('initialBrands', 'totalBrands'));
     }
 
     /**

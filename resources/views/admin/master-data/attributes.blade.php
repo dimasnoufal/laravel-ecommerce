@@ -29,6 +29,50 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @if(isset($initialAttributes) && $initialAttributes->count() > 0)
+                        @foreach($initialAttributes as $attr)
+                            <tr>
+                                <td class="text-center">{{ $loop->iteration }}</td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.65rem;">
+                                        <div class="category-icon-box" style="background: var(--primary-light); color: var(--primary);">
+                                            <i data-lucide="sliders" style="width: 16px; height: 16px;"></i>
+                                        </div>
+                                        <div>
+                                            <div style="font-weight: 600; color: var(--text-main);">{{ $attr->name }}</div>
+                                            <code class="code-pill" style="font-size: 0.7rem; padding: 0.1rem 0.35rem;">{{ $attr->slug }}</code>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if($attr->values->isEmpty())
+                                        <span style="color: var(--text-light); font-size: 0.8125rem;">Belum ada nilai</span>
+                                    @else
+                                        <div style="display: flex; flex-wrap: wrap; gap: 0.35rem;">
+                                            @foreach($attr->values->take(6) as $val)
+                                                <span class="status-pill" style="background: var(--bg-hover); color: var(--text-main); font-weight: 500; font-size: 0.75rem;">{{ $val->value }}</span>
+                                            @endforeach
+                                            @if($attr->values->count() > 6)
+                                                <span class="status-pill" style="background: var(--primary-light); color: var(--primary); font-weight: 600; font-size: 0.75rem;">+{{ $attr->values->count() - 6 }} lainnya</span>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </td>
+                                <td class="text-center">
+                                    <div class="table-actions">
+                                        <button type="button" class="tbl-btn tbl-btn-edit" onclick="editAttribute({{ $attr->id }})" title="Edit Atribut">
+                                            <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
+                                            <span>Edit</span>
+                                        </button>
+                                        <button type="button" class="tbl-btn tbl-btn-delete" onclick="deleteAttribute({{ $attr->id }}, '{{ addslashes(htmlspecialchars($attr->name, ENT_QUOTES, 'UTF-8')) }}')" title="Hapus Atribut">
+                                            <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                                            <span>Hapus</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>
@@ -93,6 +137,8 @@
         attributesTable = $('#attributesTable').DataTable({
             processing: true,
             serverSide: true,
+            deferLoading: {{ $totalAttributes ?? 0 }},
+            order: [],
             ajax: "{{ route('admin.attributes.index') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },

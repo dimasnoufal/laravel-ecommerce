@@ -30,6 +30,43 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @if(isset($initialCategories) && $initialCategories->count() > 0)
+                        @foreach($initialCategories as $cat)
+                            <tr>
+                                <td class="text-center">{{ $loop->iteration }}</td>
+                                <td>
+                                    <div style="display: flex; align-items: center; gap: 0.65rem;">
+                                        <div class="category-icon-box">
+                                            <i data-lucide="folder" style="width: 16px; height: 16px;"></i>
+                                        </div>
+                                        <span style="font-weight: 600; color: var(--text-main);">{{ $cat->name }}</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    @if($cat->parent)
+                                        <span class="status-pill" style="background: var(--primary-light); color: var(--primary);">{{ $cat->parent->name }}</span>
+                                    @else
+                                        <span style="color: var(--text-light); font-size: 0.8125rem;">Root Category</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    <code class="code-pill">{{ $cat->slug }}</code>
+                                </td>
+                                <td class="text-center">
+                                    <div class="table-actions">
+                                        <button type="button" class="tbl-btn tbl-btn-edit" onclick="editCategory({{ $cat->id }})" title="Edit Kategori">
+                                            <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
+                                            <span>Edit</span>
+                                        </button>
+                                        <button type="button" class="tbl-btn tbl-btn-delete" onclick="deleteCategory({{ $cat->id }}, '{{ addslashes(htmlspecialchars($cat->name, ENT_QUOTES, 'UTF-8')) }}')" title="Hapus Kategori">
+                                            <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                                            <span>Hapus</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    @endif
                 </tbody>
             </table>
         </div>
@@ -81,6 +118,8 @@
         categoriesTable = $('#categoriesTable').DataTable({
             processing: true,
             serverSide: true,
+            deferLoading: {{ $totalCategories ?? 0 }},
+            order: [],
             ajax: "{{ route('admin.categories.index') }}",
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'text-center' },

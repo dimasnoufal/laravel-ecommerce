@@ -1185,7 +1185,7 @@
         <nav class="sidebar-nav">
             <span class="nav-section-title">Main Menu</span>
             
-            <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
+            <a href="{{ route('admin.dashboard') }}" class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" onclick="showPreloader('Memuat Dashboard', 'Menyiapkan ringkasan performa toko...');">
                 <i data-lucide="layout-dashboard" class="nav-icon"></i>
                 <span class="nav-text">Dashboard</span>
             </a>
@@ -1198,68 +1198,68 @@
 
             <span class="nav-section-title">Master Data</span>
 
-            <a href="{{ route('admin.products.index') }}" class="nav-item {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.products.index') }}" class="nav-item {{ request()->routeIs('admin.products.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Katalog', 'Menyiapkan master katalog produk...');">
                 <i data-lucide="package" class="nav-icon"></i>
                 <span class="nav-text">Products</span>
             </a>
 
-            <a href="{{ route('admin.categories.index') }}" class="nav-item {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.categories.index') }}" class="nav-item {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Kategori', 'Mengambil hierarki kategori...');">
                 <i data-lucide="grid" class="nav-icon"></i>
                 <span class="nav-text">Categories</span>
             </a>
 
-            <a href="{{ route('admin.brands.index') }}" class="nav-item {{ request()->routeIs('admin.brands.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.brands.index') }}" class="nav-item {{ request()->routeIs('admin.brands.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Brand', 'Mengambil daftar brand katalog...');">
                 <i data-lucide="tag" class="nav-icon"></i>
                 <span class="nav-text">Brands</span>
             </a>
 
-            <a href="{{ route('admin.attributes.index') }}" class="nav-item {{ request()->routeIs('admin.attributes.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.attributes.index') }}" class="nav-item {{ request()->routeIs('admin.attributes.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Atribut', 'Mengambil spesifikasi varian...');">
                 <i data-lucide="sliders" class="nav-icon"></i>
                 <span class="nav-text">Attributes</span>
             </a>
 
-            <a href="{{ route('admin.regions.index') }}" class="nav-item {{ request()->routeIs('admin.regions.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.regions.index') }}" class="nav-item {{ request()->routeIs('admin.regions.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Wilayah', 'Mengambil data wilayah...');">
                 <i data-lucide="map-pin" class="nav-icon"></i>
                 <span class="nav-text">Regional Data</span>
             </a>
 
-            <a href="{{ route('admin.shipping.index') }}" class="nav-item {{ request()->routeIs('admin.shipping.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.shipping.index') }}" class="nav-item {{ request()->routeIs('admin.shipping.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Logistik', 'Mengambil kurir & layanan...');">
                 <i data-lucide="truck" class="nav-icon"></i>
                 <span class="nav-text">Shipping & Logistics</span>
             </a>
 
             <span class="nav-section-title">User Management</span>
 
-            <a href="{{ route('admin.users.index') }}" class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.users.index') }}" class="nav-item {{ request()->routeIs('admin.users.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Pengguna', 'Mengambil daftar pengguna...');">
                 <i data-lucide="users" class="nav-icon"></i>
                 <span class="nav-text">Users</span>
             </a>
 
-            <a href="{{ route('admin.roles.index') }}" class="nav-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.roles.index') }}" class="nav-item {{ request()->routeIs('admin.roles.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Hak Akses', 'Mengambil peran & perizinan...');">
                 <i data-lucide="shield" class="nav-icon"></i>
                 <span class="nav-text">Roles & Permissions</span>
             </a>
 
             <span class="nav-section-title">Analytics & Finance</span>
 
-            <a href="{{ route('admin.analytics.index') }}" class="nav-item {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.analytics.index') }}" class="nav-item {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Analitik', 'Menyiapkan metrik analitik...');">
                 <i data-lucide="bar-chart-3" class="nav-icon"></i>
                 <span class="nav-text">Analytics</span>
             </a>
 
-            <a href="{{ route('admin.inventory.index') }}" class="nav-item {{ request()->routeIs('admin.inventory.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.inventory.index') }}" class="nav-item {{ request()->routeIs('admin.inventory.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Inventaris', 'Mengambil data stok & mutasi...');">
                 <i data-lucide="layers" class="nav-icon"></i>
                 <span class="nav-text">Inventory</span>
             </a>
 
-            <a href="{{ route('admin.reports.index') }}" class="nav-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.reports.index') }}" class="nav-item {{ request()->routeIs('admin.reports.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Laporan', 'Menyiapkan arsip laporan...');">
                 <i data-lucide="file-text" class="nav-icon"></i>
                 <span class="nav-text">Reports</span>
             </a>
 
             <span class="nav-section-title">System</span>
 
-            <a href="{{ route('admin.activity-logs.index') }}" class="nav-item {{ request()->routeIs('admin.activity-logs.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.activity-logs.index') }}" class="nav-item {{ request()->routeIs('admin.activity-logs.*') ? 'active' : '' }}" onclick="showPreloader('Memuat Log Aktivitas', 'Mengambil rekaman aktivitas audit...');">
                 <i data-lucide="activity" class="nav-icon"></i>
                 <span class="nav-text">Activity Logs</span>
             </a>
@@ -1560,6 +1560,12 @@
             });
 
             $(document).on('xhr.dt draw.dt error.dt', function(e, settings, json, xhr) {
+                if (typeof window.hidePreloader === 'function') {
+                    window.hidePreloader();
+                }
+            });
+
+            window.addEventListener('pageshow', function() {
                 if (typeof window.hidePreloader === 'function') {
                     window.hidePreloader();
                 }

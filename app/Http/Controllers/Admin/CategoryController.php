@@ -17,10 +17,10 @@ class CategoryController extends Controller
      */
     public function index(Request $request)
     {
+        $query = Category::with('parent')->select('categories.*')->latest('categories.id');
+
         if ($request->ajax()) {
-            $data = Category::with('parent')->select('categories.*');
-            
-            return DataTables::of($data)
+            return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('name_badge', function ($row) {
                     return '<div style="display: flex; align-items: center; gap: 0.65rem;">
@@ -56,10 +56,12 @@ class CategoryController extends Controller
                 ->make(true);
         }
 
-        // Fetch categories for the parent dropdown
+        // Fetch categories for the parent dropdown and initial SSR list
         $parentCategories = Category::all();
+        $initialCategories = (clone $query)->take(10)->get();
+        $totalCategories = Category::count();
         
-        return view('admin.master-data.categories', compact('parentCategories'));
+        return view('admin.master-data.categories', compact('parentCategories', 'initialCategories', 'totalCategories'));
     }
 
     /**

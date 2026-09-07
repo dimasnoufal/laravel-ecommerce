@@ -22,10 +22,16 @@ class ProductController extends Controller
      */
     public function index(Request $request)
     {
+        $query = Product::with(['category:id,name', 'brand:id,name', 'images'])
+            ->withMin('variants as min_price', 'price')
+            ->withMax('variants as max_price', 'price')
+            ->withSum('variants as total_stock', 'stock')
+            ->withCount('variants as variant_count')
+            ->select('products.*')
+            ->latest('products.id');
+
         if ($request->ajax()) {
-            $data = Product::with(['category', 'brand', 'images', 'variants'])->select('products.*');
-            
-            return DataTables::of($data)
+            return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('product_info', function ($row) {
                     $primaryImg = $row->images->where('is_primary', true)->first() ?? $row->images->first();
@@ -60,12 +66,12 @@ class ProductController extends Controller
                     return '<span style="color: var(--text-light); font-size: 0.8125rem;">-</span>';
                 })
                 ->addColumn('price_range', function ($row) {
-                    if ($row->variants->isEmpty()) {
+                    $minPrice = $row->min_price;
+                    $maxPrice = $row->max_price;
+
+                    if ($minPrice === null && $maxPrice === null) {
                         return '<span style="color: var(--text-light); font-size: 0.8125rem;">Rp 0</span>';
                     }
-                    
-                    $minPrice = $row->variants->min('price');
-                    $maxPrice = $row->variants->max('price');
                     
                     if ($minPrice == $maxPrice) {
                         return '<span style="font-weight: 600; color: var(--text-main);">Rp ' . number_format($minPrice, 0, ',', '.') . '</span>';
@@ -74,8 +80,8 @@ class ProductController extends Controller
                     return '<span style="font-weight: 600; color: var(--text-main);">Rp ' . number_format($minPrice, 0, ',', '.') . ' - Rp ' . number_format($maxPrice, 0, ',', '.') . '</span>';
                 })
                 ->addColumn('total_stock', function ($row) {
-                    $totalStock = $row->variants->sum('stock');
-                    $variantCount = $row->variants->count();
+                    $totalStock = (int) ($row->total_stock ?? 0);
+                    $variantCount = (int) ($row->variant_count ?? 0);
                     $badgeStyle = $totalStock > 0 ? 'color: var(--success);' : 'color: var(--danger);';
                     
                     return '<div>
@@ -108,7 +114,10 @@ class ProductController extends Controller
                 ->make(true);
         }
 
-        return view('admin.master-data.products');
+        $initialProducts = (clone $query)->take(10)->get();
+        $totalProducts = Product::count();
+
+        return view('admin.master-data.products', compact('initialProducts', 'totalProducts'));
     }
 
     /**

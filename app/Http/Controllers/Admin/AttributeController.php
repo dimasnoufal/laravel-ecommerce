@@ -17,10 +17,10 @@ class AttributeController extends Controller
      */
     public function index(Request $request)
     {
+        $query = Attribute::with('values')->select('attributes.*')->latest('attributes.id');
+
         if ($request->ajax()) {
-            $data = Attribute::with('values')->select('attributes.*');
-            
-            return DataTables::of($data)
+            return DataTables::of($query)
                 ->addIndexColumn()
                 ->addColumn('name_badge', function ($row) {
                     return '<div style="display: flex; align-items: center; gap: 0.65rem;">
@@ -66,7 +66,10 @@ class AttributeController extends Controller
                 ->make(true);
         }
 
-        return view('admin.master-data.attributes');
+        $initialAttributes = (clone $query)->take(10)->get();
+        $totalAttributes = Attribute::count();
+
+        return view('admin.master-data.attributes', compact('initialAttributes', 'totalAttributes'));
     }
 
     /**
