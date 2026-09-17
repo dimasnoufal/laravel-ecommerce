@@ -19,20 +19,65 @@ use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\SettingController;
 
-Route::get('/', function () {
-    if (auth()->check()) {
-        return redirect()->route('admin.dashboard');
-    }
-    return redirect()->route('login');
+use App\Http\Controllers\Storefront\HomeController;
+use App\Http\Controllers\Storefront\ProductController as StorefrontProductController;
+use App\Http\Controllers\Storefront\CartController;
+use App\Http\Controllers\Storefront\CheckoutController;
+use App\Http\Controllers\Storefront\OrderController as StorefrontOrderController;
+use App\Http\Controllers\Storefront\RegionApiController;
+
+// ==========================================
+// STOREFRONT PUBLIC ROUTES (Guests & Users)
+// ==========================================
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/products/{slug}', [StorefrontProductController::class, 'show'])->name('products.show');
+Route::get('/api/products/{id}/variant', [StorefrontProductController::class, 'getVariant'])->name('api.products.variant');
+
+// Cart Operations (Supports Guest Session & Authenticated User)
+Route::prefix('cart')->name('cart.')->group(function () {
+    Route::get('/', [CartController::class, 'index'])->name('index');
+    Route::post('/add', [CartController::class, 'add'])->name('add');
+    Route::patch('/update/{id}', [CartController::class, 'update'])->name('update');
+    Route::delete('/remove/{id}', [CartController::class, 'remove'])->name('remove');
+    Route::get('/summary', [CartController::class, 'summary'])->name('summary');
 });
 
+// Cascading Region APIs (Kemendagri Data)
+Route::prefix('api/regions')->name('api.regions.')->group(function () {
+    Route::get('provinces', [RegionApiController::class, 'provinces'])->name('provinces');
+    Route::get('provinces/{province}/regencies', [RegionApiController::class, 'regencies'])->name('regencies');
+    Route::get('regencies/{regency}/districts', [RegionApiController::class, 'districts'])->name('districts');
+    Route::get('districts/{district}/villages', [RegionApiController::class, 'villages'])->name('villages');
+});
+
+// Guest Authentication Routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
+    Route::get('/register', [AuthController::class, 'showRegisterForm'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+
+    // AJAX Auth Modal Endpoints
+    Route::post('/ajax/login', [AuthController::class, 'ajaxLogin'])->name('ajax.login');
+    Route::post('/ajax/register', [AuthController::class, 'ajaxRegister'])->name('ajax.register');
 });
 
+// Authenticated Customer & Admin Routes
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+    // Customer Checkout Process
+    Route::prefix('checkout')->name('checkout.')->group(function () {
+        Route::get('/', [CheckoutController::class, 'index'])->name('index');
+        Route::post('/process', [CheckoutController::class, 'process'])->name('process');
+    });
+
+    // Customer Orders & Tracking
+    Route::prefix('orders')->name('orders.')->group(function () {
+        Route::get('/', [StorefrontOrderController::class, 'index'])->name('index');
+        Route::get('/{order_number}', [StorefrontOrderController::class, 'show'])->name('show');
+        Route::post('/{order_number}/simulate-pay', [StorefrontOrderController::class, 'simulatePayment'])->name('simulate-pay');
+    });
     
     // Protected routes for admin
     Route::middleware('role:admin')->group(function () {
